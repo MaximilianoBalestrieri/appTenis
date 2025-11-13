@@ -1,6 +1,7 @@
 package com.tec.apptenis.model;
 import java.io.Serializable;
 public class Alumno implements Serializable {
+
     private  int idAlumno;
     private String nombre;
     private String telefono;

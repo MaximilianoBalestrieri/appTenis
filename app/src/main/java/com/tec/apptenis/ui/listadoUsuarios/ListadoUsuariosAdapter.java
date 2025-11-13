@@ -1,4 +1,4 @@
-package com.tec.apptenis.ui.listadoUsuarios; // Ajusta el paquete si es necesario
+package com.tec.apptenis.ui.listadoUsuarios;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,18 +9,26 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.tec.apptenis.R;
-import com.tec.apptenis.model.Usuario; // Asegúrate de que este paquete sea correcto
+import com.tec.apptenis.model.Usuario;
 
 import java.util.List;
 
 public class ListadoUsuariosAdapter extends RecyclerView.Adapter<ListadoUsuariosAdapter.ViewHolder> {
 
+    // INTERFAZ MOVIMIENTO: Ahora es pública y estática dentro del adaptador
+    public interface OnUsuarioClickListener {
+        void onUsuarioClick(Usuario usuario);
+    }
+
     private final Context context;
     private List<Usuario> listaUsuarios;
+    private final OnUsuarioClickListener clickListener;
 
-    public ListadoUsuariosAdapter(Context context, List<Usuario> listaUsuarios) {
+    // Constructor modificado para recibir el Listener
+    public ListadoUsuariosAdapter(Context context, List<Usuario> listaUsuarios, OnUsuarioClickListener clickListener) {
         this.context = context;
         this.listaUsuarios = listaUsuarios;
+        this.clickListener = clickListener;
     }
 
     @NonNull
@@ -35,12 +43,14 @@ public class ListadoUsuariosAdapter extends RecyclerView.Adapter<ListadoUsuarios
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Usuario usuario = listaUsuarios.get(position);
 
-        // Asignamos los datos a los TextViews
         holder.tvEmailUsuario.setText(usuario.getEmail());
         holder.tvRolUsuario.setText("Rol: " + usuario.getRol());
 
-        // Aquí podrías agregar un listener si el usuario hiciera click en la fila
-        // holder.itemView.setOnClickListener(...);
+        holder.itemView.setOnClickListener(v -> {
+            if (clickListener != null) {
+                clickListener.onUsuarioClick(usuario);
+            }
+        });
     }
 
     @Override
@@ -48,10 +58,9 @@ public class ListadoUsuariosAdapter extends RecyclerView.Adapter<ListadoUsuarios
         return listaUsuarios.size();
     }
 
-    // Método para actualizar la lista de usuarios desde el ViewModel
     public void setUsuarios(List<Usuario> nuevosUsuarios) {
         this.listaUsuarios = nuevosUsuarios;
-        notifyDataSetChanged(); // Notifica al RecyclerView que los datos han cambiado
+        notifyDataSetChanged();
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {

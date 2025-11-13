@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.tec.apptenis.model.Alumno;
+import com.tec.apptenis.model.IdUsuarioRequest;
 import com.tec.apptenis.model.Profesor;
 import com.tec.apptenis.model.Clase;
 import com.tec.apptenis.model.Usuario;
@@ -103,6 +104,10 @@ public class TenisApi {
                 @Path("id") int idProfesor, // 👈 Se requiere la anotación @Path
                 @Body Profesor profesor
         );
+        // En tu interfaz TenisApiService
+// Asumiendo que envías el ID del Usuario en el cuerpo del request.
+        @POST("api/Alumnos/AltaDesdeUsuario")
+        Call<Alumno> crearAlumnoDesdeUsuario(@Header("Authorization") String token, @Body IdUsuarioRequest request);
         @PUT("api/alumnos/actualizar")
         Call<Alumno> actualizarAlumno(@Header("Authorization") String token, @Body Alumno alumno);
 
