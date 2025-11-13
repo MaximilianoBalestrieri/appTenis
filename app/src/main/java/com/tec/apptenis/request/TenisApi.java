@@ -94,6 +94,9 @@ public class TenisApi {
 
         @GET("api/usuarios")
         Call<List<Usuario>> obtenerUsuarios(@Header("Authorization") String token);
+
+        @GET("api/alumnos")
+        Call<List<Alumno>> obtenerAlumnos(@Header("Authorization") String token);
         @PUT("api/profesores/{id}") // 👈 Usa {id}
         Call<Profesor> actualizarProfesor(
                 @Header("Authorization") String token,

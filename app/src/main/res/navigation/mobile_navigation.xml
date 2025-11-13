@@ -24,8 +24,8 @@
         tools:layout="@layout/fragment_listadousuarios" />
 
     <fragment
-        android:id="@+id/nav_slideshow"
-        android:name="com.tec.apptenis.ui.slideshow.SlideshowFragment"
-        android:label="@string/menu_slideshow"
-        tools:layout="@layout/fragment_slideshow" />
+        android:id="@+id/nav_alumnos"
+        android:name="com.tec.apptenis.ui.alumnos.AlumnosFragment"
+        android:label="@string/menu_listadoalumnos"
+        tools:layout="@layout/fragment_alumnos" />
 </navigation>
