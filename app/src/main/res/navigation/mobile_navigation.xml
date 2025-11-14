@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:tools="http://schemas.android/tools"
     android:id="@+id/mobile_navigation"
     app:startDestination="@+id/nav_home">
 
+    <!-- Fragmentos existentes -->
     <fragment
         android:id="@+id/nav_home"
         android:name="com.tec.apptenis.ui.home.HomeFragment"
@@ -18,14 +19,37 @@
         tools:layout="@layout/fragment_perfil" />
 
     <fragment
-        android:id="@+id/nav_listadousuarios"
-        android:name="com.tec.apptenis.ui.listadoUsuarios.ListadoUsuariosFragment"
-        android:label="Listado de Usuarios"
-        tools:layout="@layout/fragment_listadousuarios" />
-
-    <fragment
         android:id="@+id/nav_alumnos"
         android:name="com.tec.apptenis.ui.alumnos.AlumnosFragment"
         android:label="@string/menu_listadoalumnos"
         tools:layout="@layout/fragment_alumnos" />
+
+    <!-- Fragmento de Listado de Usuarios (El origen de la navegación) -->
+    <fragment
+        android:id="@+id/nav_listadousuarios"
+        android:name="com.tec.apptenis.ui.listadoUsuarios.ListadoUsuariosFragment"
+        android:label="Listado de Usuarios"
+        tools:layout="@layout/fragment_listadousuarios">
+
+        <!-- 🔥 ACCIÓN AÑADIDA: De Lista a Registro 🔥 -->
+        <action
+            android:id="@+id/action_listadousuarios_to_registroalumno"
+            app:destination="@id/nav_registroalumno" />
+
+    </fragment>
+
+    <!-- 🔥 NUEVO DESTINO: Fragmento de Registro de Alumno 🔥 -->
+    <fragment
+        android:id="@+id/nav_registroalumno"
+        android:name="com.tec.apptenis.ui.registroAlumno.RegistroAlumnoFragment"
+        android:label="Registro de Alumno"
+        tools:layout="@layout/fragment_registro_alumno">
+
+        <!-- Argumento que se pasa desde la Lista. Esto reemplaza el Bundle manual. -->
+        <argument
+            android:name="USUARIO_ID"
+            app:argType="integer"
+            android:defaultValue="-1" />
+
+    </fragment>
 </navigation>

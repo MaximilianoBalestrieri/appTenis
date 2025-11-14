@@ -6,6 +6,7 @@ import android.content.SharedPreferences;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.tec.apptenis.model.Alumno;
+import com.tec.apptenis.model.AlumnoRegistroDTO;
 import com.tec.apptenis.model.IdUsuarioRequest;
 import com.tec.apptenis.model.Profesor;
 import com.tec.apptenis.model.Clase;
@@ -33,7 +34,7 @@ import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
 
-// Clase renombrada a TenisApi
+
 public class TenisApi {
 
     private static final String BASE_URL = "http://10.0.2.2:5190/";
@@ -111,6 +112,11 @@ public class TenisApi {
         @PUT("api/alumnos/actualizar")
         Call<Alumno> actualizarAlumno(@Header("Authorization") String token, @Body Alumno alumno);
 
+        // Endpoint para verificar si existe un perfil de alumno por ID de Usuario
+        @GET("api/Alumnos/existe/{usuarioId}")
+        Call<Boolean> verificarExistenciaAlumno(@Header("Authorization") String token, @Path("usuarioId") int usuarioId);
+        @POST("api/Alumnos/completar")
+        Call<Void> completarRegistroAlumno(@Body AlumnoRegistroDTO alumnoDto);
         @Multipart
         @POST("api/Clase/cargar")
         Call<Clase> CargarClase(@Header("Authorization") String token,
