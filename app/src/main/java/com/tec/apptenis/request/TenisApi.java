@@ -111,7 +111,8 @@ public class TenisApi {
         Call<Alumno> crearAlumnoDesdeUsuario(@Header("Authorization") String token, @Body IdUsuarioRequest request);
         @PUT("api/alumnos/actualizar")
         Call<Alumno> actualizarAlumno(@Header("Authorization") String token, @Body Alumno alumno);
-
+        @GET("api/alumnos/{id}") // <--- Nuevo endpoint necesario para cargar un solo alumno
+        Call<Alumno> obtenerAlumnoPorId(@Header("Authorization") String token, @Path("id") int idAlumno);
         // Endpoint para verificar si existe un perfil de alumno por ID de Usuario
         @GET("api/Alumnos/existe/{usuarioId}")
         Call<Boolean> verificarExistenciaAlumno(@Header("Authorization") String token, @Path("usuarioId") int usuarioId);

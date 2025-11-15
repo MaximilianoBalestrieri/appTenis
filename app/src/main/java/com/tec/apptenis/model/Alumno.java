@@ -1,4 +1,6 @@
 package com.tec.apptenis.model;
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 public class Alumno implements Serializable {
 
@@ -8,6 +10,7 @@ public class Alumno implements Serializable {
     private String direccion;
     private String localidad;
     private String nivel;
+    @SerializedName("manoHabil")
     private String manohabil;
     private String reves;
 

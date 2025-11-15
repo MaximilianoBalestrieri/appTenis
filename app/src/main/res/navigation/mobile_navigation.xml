@@ -23,7 +23,9 @@
         android:name="com.tec.apptenis.ui.alumnos.AlumnosFragment"
         android:label="@string/menu_listadoalumnos"
         tools:layout="@layout/fragment_alumnos" />
-
+    <action
+        android:id="@+id/action_alumnosFragment_to_detalleAlumnoFragment"
+        app:destination="@id/nav_detalle_alumno" />
     <!-- Fragmento de Listado de Usuarios (El origen de la navegación) -->
     <fragment
         android:id="@+id/nav_listadousuarios"
@@ -31,7 +33,6 @@
         android:label="Listado de Usuarios"
         tools:layout="@layout/fragment_listadousuarios">
 
-        <!-- 🔥 ACCIÓN AÑADIDA: De Lista a Registro 🔥 -->
         <action
             android:id="@+id/action_listadousuarios_to_registroalumno"
             app:destination="@id/nav_registroalumno" />
@@ -52,4 +53,14 @@
             android:defaultValue="-1" />
 
     </fragment>
+    <fragment
+        android:id="@+id/nav_detalle_alumno"
+        android:name="com.tec.apptenis.ui.alumnos.DetallesAlumnoFragment"
+        android:label="Detalles del Alumno"
+        tools:layout="@layout/fragment_detalles_alumno">
+
+        <argument
+            android:name="alumno_id"
+            app:argType="integer"
+            android:defaultValue="0" /> </fragment>
 </navigation>
