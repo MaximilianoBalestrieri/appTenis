@@ -28,7 +28,7 @@ public class ClaseViewModel extends AndroidViewModel {
     private final MutableLiveData<List<AlumnoSeleccionable>> _alumnosDisponibles = new MutableLiveData<>();
     public LiveData<List<AlumnoSeleccionable>> alumnosDisponibles = _alumnosDisponibles;
 
-    // 🟢 NUEVO: LiveData para comunicar el evento de éxito y navegación/cierre
+    // LiveData para comunicar el evento de éxito y navegación/cierre
     private final MutableLiveData<Boolean> _claseGuardadaExitosa = new MutableLiveData<>();
     public LiveData<Boolean> getClaseGuardadaExitosa() {
         return _claseGuardadaExitosa;
@@ -40,7 +40,14 @@ public class ClaseViewModel extends AndroidViewModel {
         _claseGuardadaExitosa.setValue(false);
     }
 
-    // ... (El resto de los métodos cargarAlumnosParaSeleccion, actualizarEstadoSeleccion, getAlumnosSeleccionados se mantienen sin cambios) ...
+    // 🟢 MÉTODO DE RESETEO: Público y a nivel de clase
+    /**
+     * Resetea el LiveData de éxito para evitar que el Fragment navegue al rotar
+     * o al regresar si el LiveData ya estaba en true.
+     */
+    public void resetClaseGuardadaEstado() {
+        _claseGuardadaExitosa.setValue(false);
+    }
 
     /**
      * Carga todos los alumnos usando la API REST.
@@ -116,7 +123,7 @@ public class ClaseViewModel extends AndroidViewModel {
 
 
     // ----------------------------------------------------------------------
-    // 🟢 MÉTODO MODIFICADO: Notificación de éxito para cerrar la vista
+    // MÉTODO guardarNuevaClase
     // ----------------------------------------------------------------------
     /**
      * Envía la solicitud de creación de clase con alumnos inscritos a la API REST.
@@ -137,7 +144,6 @@ public class ClaseViewModel extends AndroidViewModel {
             public void onResponse(@NonNull Call<Clase> call, @NonNull Response<Clase> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(getApplication(), "✅ Clase creada con éxito!", Toast.LENGTH_LONG).show();
-
                     // 🟢 ACCIÓN CLAVE: Activar la señal de éxito para que el Fragment la observe
                     _claseGuardadaExitosa.setValue(true);
 
@@ -146,9 +152,7 @@ public class ClaseViewModel extends AndroidViewModel {
                     Toast.makeText(getApplication(), "❌ Error al crear clase. Código: " + response.code(), Toast.LENGTH_LONG).show();
                 }
             }
-            public void resetClaseGuardadaEstado() {
-                 _claseGuardadaExitosa.setValue(false);
-            }
+
             @Override
             public void onFailure(@NonNull Call<Clase> call, @NonNull Throwable t) {
                 Log.e("ClaseViewModel", "Fallo de red al crear clase: " + t.getMessage());

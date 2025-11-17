@@ -19,7 +19,6 @@ import android.widget.Toast;
 import com.tec.apptenis.R;
 import com.tec.apptenis.databinding.FragmentClaseBinding;
 import com.tec.apptenis.model.Alumno;
-// 🟢 IMPORTAR EL DTO DE PETICIÓN
 import com.tec.apptenis.model.ClaseCreacionRequest;
 
 import java.time.LocalDate;
@@ -28,7 +27,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
-import java.util.stream.Collectors; // Necesario para la conversión de IDs en Java 8+
+import java.util.stream.Collectors;
 
 public class ClaseFragment extends Fragment implements ClaseAdapter.OnSelectionChangeListener {
 
@@ -41,7 +40,7 @@ public class ClaseFragment extends Fragment implements ClaseAdapter.OnSelectionC
     private final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
     private final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
 
-    // 🟢 NUEVO: Formateador para la API (el backend C# espera la hora con segundos)
+    // Formateador para la API (el backend C# espera la hora con segundos)
     private final DateTimeFormatter TIME_FORMATTER_API = DateTimeFormatter.ofPattern("HH:mm:ss");
 
     @Override
@@ -69,22 +68,29 @@ public class ClaseFragment extends Fragment implements ClaseAdapter.OnSelectionC
 
         mViewModel = new ViewModelProvider(this).get(ClaseViewModel.class);
 
-        // Observar LiveData de Alumnos Seleccionables
+        // 1. Observar LiveData de Alumnos Seleccionables (Para que el RecyclerView se llene)
         mViewModel.alumnosDisponibles.observe(getViewLifecycleOwner(), alumnos -> {
             adapter.submitList(alumnos);
 
-            // Lógica para lista vacía
             boolean isEmpty = alumnos == null || alumnos.isEmpty();
             binding.rvAlumnosSeleccion.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
             binding.tvEmptyListAlumnos.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
         });
 
-        // Observar y manejar posibles mensajes de éxito/error del ViewModel (Opcional, pero recomendado)
-        // mViewModel.getResultadoGuardado().observe(getViewLifecycleOwner(), resultado -> {
-        //     // Aquí puedes resetear el formulario o navegar si el guardado fue exitoso
-        // });
+        // 2. 🟢 Implementación CLAVE: Observar el evento de éxito para cerrar la vista
+        mViewModel.getClaseGuardadaExitosa().observe(getViewLifecycleOwner(), isGuardado -> {
+            if (isGuardado) {
+                Toast.makeText(getContext(), "Clase guardada exitosamente.", Toast.LENGTH_SHORT).show();
 
-        // Iniciar la carga de datos de los alumnos desde la API
+                // Cierra el Fragment y vuelve atrás
+                requireActivity().onBackPressed();
+
+                // ⚠️ CORRECCIÓN: Llamar al método público del ViewModel para resetear el estado.
+                mViewModel.resetClaseGuardadaEstado();
+            }
+        });
+
+        // 3. Iniciar la carga de datos de los alumnos desde la API
         mViewModel.cargarAlumnosParaSeleccion();
     }
 
@@ -151,7 +157,7 @@ public class ClaseFragment extends Fragment implements ClaseAdapter.OnSelectionC
     }
 
     // ----------------------------------------------------------------------
-    // 🟢 LÓGICA FINAL PARA GUARDAR LA CLASE
+    // LÓGICA FINAL PARA GUARDAR LA CLASE
     // ----------------------------------------------------------------------
     private void guardarClase() {
         // 1. Obtener datos de la UI
@@ -176,7 +182,7 @@ public class ClaseFragment extends Fragment implements ClaseAdapter.OnSelectionC
         try {
             // 3.1 Obtener solo los IDs de los alumnos
             List<Integer> idsAlumnos = alumnosSeleccionados.stream()
-                    .map(Alumno::getIdAlumno) // Asume que Alumno tiene getIdAlumno()
+                    .map(Alumno::getIdAlumno)
                     .collect(Collectors.toList());
 
             // 3.2 Formatear la hora correctamente (HH:mm:ss)
@@ -184,8 +190,7 @@ public class ClaseFragment extends Fragment implements ClaseAdapter.OnSelectionC
             String horaApiStr = horaLocal.format(TIME_FORMATTER_API);
 
             // 3.3 Obtener el ID del profesor
-            // ⚠️ REEMPLAZA ESTE VALOR ⚠️
-            // DEBES OBTENER ESTO DE TU SISTEMA DE AUTENTICACIÓN/SESIÓN.
+            // REEMPLAZA ESTE VALOR: DEBES OBTENER ESTO DE TU SISTEMA DE AUTENTICACIÓN/SESIÓN.
             int idProfesorActual = 1;
 
             // 4. Crear el Objeto de Petición (DTO)
