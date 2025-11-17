@@ -61,7 +61,13 @@ public class MainActivity extends AppCompatActivity {
 
         // Configuración del Navigation Component
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_listadousuarios, R.id.nav_alumnos)
+                R.id.nav_home,
+                R.id.nav_listadousuarios,
+                R.id.nav_alumnos,
+                // 1. Añadido el Listado de Clases
+                R.id.nav_listado_clases,
+                // 2. Añadido el Fragment para Crear Clase (si está en el menú)
+                R.id.nav_crear_clase)
                 .setOpenableLayout(drawer)
                 .build();
 

@@ -94,8 +94,8 @@ public class TenisApi {
         @GET("api/Profesores")
         Call<List<Profesor>> obtenerPerfil(@Header("Authorization") String token);
 
-        @GET("api/Clases")
-        Call<List<Profesor>> getClase(@Header("Authorization") String token);
+      //  @GET("api/Clases")
+       // Call<List<Profesor>> getClase(@Header("Authorization") String token);
 
 
         @GET("api/clase/alumno/{id}")
@@ -143,6 +143,9 @@ public class TenisApi {
         Call<Clase> CargarClase(@Header("Authorization") String token,
                                 @Part MultipartBody.Part imagen,
                                 @Part("clase") RequestBody alumnoBody);
+
+        @GET("api/Clases")
+        Call<List<Clase>> obtenerClases(@Header("Authorization") String token);
 
 
         @POST("api/Clases")
