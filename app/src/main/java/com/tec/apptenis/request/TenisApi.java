@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.tec.apptenis.model.Alumno;
 import com.tec.apptenis.model.AlumnoRegistroDTO;
+import com.tec.apptenis.model.ClaseCreacionRequest;
 import com.tec.apptenis.model.IdUsuarioRequest;
 import com.tec.apptenis.model.Profesor;
 import com.tec.apptenis.model.Clase;
@@ -65,9 +66,14 @@ public class TenisApi {
         return retrofit;
     }
 
-    // Método auxiliar para obtener la instancia de Gson con leniency
+    // 🔥 MODIFICACIÓN CLAVE 🔥
+    // Método auxiliar para obtener la instancia de Gson con formato de fecha
     private static Gson getGsonInstance() {
-        return new GsonBuilder().setLenient().create();
+        return new GsonBuilder()
+                // 🟢 Añadir el formato de fecha exacto de C# para java.util.Date
+                .setDateFormat("yyyy-MM-dd'T'HH:mm:ss")
+                .setLenient() // Mantener leniency por si acaso
+                .create();
     }
 
     // Método unificado para obtener el servicio
@@ -84,6 +90,7 @@ public class TenisApi {
                 // 🔑 CORRECCIÓN: Usar @Body para enviar el objeto como JSON
                 @Body UsuarioRequest request
         );
+
         @GET("api/Profesores")
         Call<List<Profesor>> obtenerPerfil(@Header("Authorization") String token);
 
@@ -99,33 +106,50 @@ public class TenisApi {
 
         @GET("api/alumnos")
         Call<List<Alumno>> obtenerAlumnos(@Header("Authorization") String token);
-        @PUT("api/profesores/{id}") // 👈 Usa {id}
+
+        @PUT("api/profesores/{id}")
+            // 👈 Usa {id}
         Call<Profesor> actualizarProfesor(
                 @Header("Authorization") String token,
                 @Path("id") int idProfesor, // 👈 Se requiere la anotación @Path
                 @Body Profesor profesor
         );
+
         // En tu interfaz TenisApiService
 // Asumiendo que envías el ID del Usuario en el cuerpo del request.
         @POST("api/Alumnos/AltaDesdeUsuario")
         Call<Alumno> crearAlumnoDesdeUsuario(@Header("Authorization") String token, @Body IdUsuarioRequest request);
+
         @PUT("api/alumnos/actualizar")
         Call<Alumno> actualizarAlumno(@Header("Authorization") String token, @Body Alumno alumno);
-        @GET("api/alumnos/{id}") // <--- Nuevo endpoint necesario para cargar un solo alumno
+
+        @GET("api/alumnos/{id}")
+            // <--- Nuevo endpoint necesario para cargar un solo alumno
         Call<Alumno> obtenerAlumnoPorId(@Header("Authorization") String token, @Path("id") int idAlumno);
+
         // Endpoint para verificar si existe un perfil de alumno por ID de Usuario
         @GET("api/Alumnos/existe/{usuarioId}")
         Call<Boolean> verificarExistenciaAlumno(@Header("Authorization") String token, @Path("usuarioId") int usuarioId);
+        // Dentro de tu interfaz TenisApiService
+
+        @POST("clases")
+        Call<Clase> crearClase(@Header("Authorization") String token, @Body Clase nuevaClase);
+
         @POST("api/Alumnos/completar")
         Call<Void> completarRegistroAlumno(@Body AlumnoRegistroDTO alumnoDto);
+
         @Multipart
         @POST("api/Clase/cargar")
         Call<Clase> CargarClase(@Header("Authorization") String token,
                                 @Part MultipartBody.Part imagen,
                                 @Part("clase") RequestBody alumnoBody);
+
+
+        @POST("api/Clases")
+            // Asegúrate que esta es la ruta POST de tu ClasesController
+        Call<Clase> crearClase(@Header("Authorization") String token,
+                               @Body ClaseCreacionRequest claseRequest);
     }
-
-
     public static void guardarToken(Context context, String token) {
         SharedPreferences sp = context.getSharedPreferences("token.xml", Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sp.edit();

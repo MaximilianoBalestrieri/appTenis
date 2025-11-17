@@ -39,7 +39,7 @@
 
     </fragment>
 
-    <!-- 🔥 NUEVO DESTINO: Fragmento de Registro de Alumno 🔥 -->
+
     <fragment
         android:id="@+id/nav_registroalumno"
         android:name="com.tec.apptenis.ui.registroAlumno.RegistroAlumnoFragment"
@@ -63,4 +63,12 @@
             android:name="alumno_id"
             app:argType="integer"
             android:defaultValue="0" /> </fragment>
+
+    <fragment
+        android:id="@+id/nav_crear_clase"
+        android:name="com.tec.apptenis.ui.clase.ClaseFragment"
+        android:label="Crear Clase"
+        tools:layout="@layout/fragment_clase" >
+
+    </fragment>
 </navigation>

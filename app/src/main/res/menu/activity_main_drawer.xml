@@ -20,5 +20,10 @@
             android:id="@+id/nav_alumnos"
             android:icon="@drawable/ic_menu_slideshow"
             android:title="@string/menu_listadoalumnos" />
+
+        <item
+            android:id="@+id/nav_crear_clase"
+            android:icon="@android:drawable/ic_menu_add"
+            android:title="Crear Clase" />
     </group>
 </menu>
