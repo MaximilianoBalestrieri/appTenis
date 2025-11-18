@@ -8,6 +8,8 @@ import com.google.gson.GsonBuilder;
 import com.tec.apptenis.model.Alumno;
 import com.tec.apptenis.model.AlumnoRegistroDTO;
 import com.tec.apptenis.model.ClaseCreacionRequest;
+import com.tec.apptenis.model.Devolucion;
+import com.tec.apptenis.model.DevolucionRequest;
 import com.tec.apptenis.model.IdUsuarioRequest;
 import com.tec.apptenis.model.Profesor;
 import com.tec.apptenis.model.Clase;
@@ -152,6 +154,12 @@ public class TenisApi {
             // Asegúrate que esta es la ruta POST de tu ClasesController
         Call<Clase> crearClase(@Header("Authorization") String token,
                                @Body ClaseCreacionRequest claseRequest);
+
+        @POST("api/Devoluciones") // Ruta del DevolucionesController
+        Call<Devolucion> crearDevolucion(
+                @Header("Authorization") String token,
+                @Body DevolucionRequest devolucionRequest // Usamos el DTO de request
+        );
     }
     public static void guardarToken(Context context, String token) {
         SharedPreferences sp = context.getSharedPreferences("token.xml", Context.MODE_PRIVATE);

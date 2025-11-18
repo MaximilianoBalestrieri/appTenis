@@ -76,4 +76,18 @@
         android:name="com.tec.apptenis.ui.listadoClases.ListadoClasesFragment"
         android:label="Listado de Clases"
         tools:layout="@layout/fragment_listado_clases" />
+    <action
+        android:id="@+id/action_listadoClasesFragment_to_detallesClaseFragment"
+        app:destination="@id/nav_detalles_clase" />
+    <fragment
+        android:id="@+id/nav_detalles_clase"
+        android:name="com.tec.apptenis.ui.detallesclase.DetallesClaseFragment"
+        android:label="Detalles y Devolución"
+        tools:layout="@layout/fragment_detalles_clase">
+
+        <argument
+            android:name="clase_seleccionada"
+            app:argType="com.tec.apptenis.model.Clase" />
+
+    </fragment>
 </navigation>

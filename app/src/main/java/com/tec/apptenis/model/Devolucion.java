@@ -1,14 +1,18 @@
 package com.tec.apptenis.model;
 
-import java.io.Serializable;
+import com.google.gson.annotations.SerializedName;
 
-import kotlinx.serialization.descriptors.ClassSerialDescriptorBuilder;
+import java.io.Serializable;
+// import kotlinx.serialization.descriptors.ClassSerialDescriptorBuilder; // Esto no es necesario si usas java.io.Serializable
 
 public class Devolucion implements Serializable {
     private int idDevolucion;
     private String comentario;
     private String ejemplo;
-    private Clase idClase;
+
+    // 🚨 CORRECCIÓN CLAVE: Debe ser int IdClaseAlumno para coincidir con la FK de C#
+    @SerializedName("idClaseAlumno") // <-- Mapeo explícito
+    private int idClaseAlumno;
 
     public Devolucion() {
     }
@@ -37,20 +41,20 @@ public class Devolucion implements Serializable {
         this.ejemplo = ejemplo;
     }
 
-    public Clase getIdClase() {
-        return idClase;
+    // 🚨 Nuevo Getter y Setter para la FK correcta
+    public int getIdClaseAlumno() {
+        return idClaseAlumno;
     }
 
-    public void setIdClase(Clase idClase) {
-        this.idClase = idClase;
+    public void setIdClaseAlumno(int idClaseAlumno) {
+        this.idClaseAlumno = idClaseAlumno;
     }
 
-    public Devolucion(int idDevolucion, String comentario, String ejemplo, Clase idClase) {
+    // 🚨 Constructor Completo Corregido
+    public Devolucion(int idDevolucion, String comentario, String ejemplo, int idClaseAlumno) {
         this.idDevolucion = idDevolucion;
         this.comentario = comentario;
         this.ejemplo = ejemplo;
-        this.idClase = idClase;
-
-
+        this.idClaseAlumno = idClaseAlumno;
     }
 }

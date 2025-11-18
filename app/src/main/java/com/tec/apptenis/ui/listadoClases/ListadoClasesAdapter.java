@@ -1,4 +1,4 @@
-package com.tec.apptenis.ui.listadoClases; // Importante: Corregí el paquete a 'listadoclases' minúsculas
+package com.tec.apptenis.ui.listadoClases; // Usamos minúsculas por convención
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,24 +13,39 @@ import com.tec.apptenis.R;
 import com.tec.apptenis.model.Clase;
 import com.tec.apptenis.model.ClaseAlumno;
 
-import java.text.SimpleDateFormat; // 🟢 Necesario para el formato de fecha
-import java.util.Date; // 🟢 Necesario para el formato de fecha
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
-import java.util.Locale; // 🟢 Necesario para el formato de fecha en español
+import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class ListadoClasesAdapter extends ListAdapter<Clase, ListadoClasesAdapter.ClaseViewHolder> {
 
-    public ListadoClasesAdapter() {
-        super(DIFF_CALLBACK);
+
+    public static interface OnClaseClickListener {
+        void onClaseClick(Clase clase);
     }
 
+    private final OnClaseClickListener listener;
+
+    // 2. CONSTRUCTOR AJUSTADO PARA RECIBIR EL LISTENER
+    public ListadoClasesAdapter(OnClaseClickListener listener) {
+        super(DIFF_CALLBACK);
+        this.listener = listener; // Guardamos la referencia al fragmento
+    }
+
+    // Dejamos un constructor sin listener por si es necesario, aunque el Fragment usará el otro
+    public ListadoClasesAdapter() {
+        this(null);
+    }
+
+    // 3. AJUSTAR onCreateViewHolder para pasar el listener al ViewHolder
     @NonNull
     @Override
     public ClaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_clase, parent, false);
-        return new ClaseViewHolder(view);
+        return new ClaseViewHolder(view, listener); // <-- Pasamos el listener
     }
 
     @Override
@@ -46,30 +61,44 @@ public class ListadoClasesAdapter extends ListAdapter<Clase, ListadoClasesAdapte
         private final TextView tvEstado;
         private final TextView tvAlumnos;
 
-        public ClaseViewHolder(@NonNull View itemView) {
+        // 4. CONSTRUCTOR DEL VIEWHOLDER AJUSTADO PARA EL CLIC
+        public ClaseViewHolder(@NonNull View itemView, final OnClaseClickListener listener) {
             super(itemView);
             tvFecha = itemView.findViewById(R.id.tv_fecha);
             tvHora = itemView.findViewById(R.id.tv_hora);
             tvEstado = itemView.findViewById(R.id.tv_estado);
             tvAlumnos = itemView.findViewById(R.id.tv_alumnos);
+
+            // 5. IMPLEMENTACIÓN DEL CLIC EN LA FILA
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (listener != null) {
+                        int position = getAdapterPosition();
+                        if (position != RecyclerView.NO_POSITION && getBindingAdapter() != null) {
+                            // Obtener el objeto Clase de la posición
+                            Clase clase = ((ListadoClasesAdapter) getBindingAdapter()).getItem(position);
+                            listener.onClaseClick(clase); // <-- Llamar al método del Fragment
+                        }
+                    }
+                }
+            });
         }
 
         public void bind(Clase clase) {
 
-            // 1. FORMATEAR LA FECHA (Date a String legible)
+            // 1. FORMATEAR LA FECHA
             Date fechaOriginal = clase.getFecha();
             if (fechaOriginal != null) {
-                // Formato: dd/MM/yyyy, usando Locale español para consistencia
                 SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", new Locale("es", "ES"));
                 tvFecha.setText(dateFormat.format(fechaOriginal));
             } else {
                 tvFecha.setText("N/A");
             }
 
-            // 2. FORMATEAR LA HORA (String de TimeSpan a hh:mm)
-            String horaOriginal = clase.getHora(); // Viene como "HH:mm:ss"
+            // 2. FORMATEAR LA HORA
+            String horaOriginal = clase.getHora();
             if (horaOriginal != null && horaOriginal.length() >= 5) {
-                // Tomamos solo los primeros 5 caracteres (HH:mm)
                 String horaFormateada = horaOriginal.substring(0, 5);
                 tvHora.setText(horaFormateada);
             } else {
@@ -80,10 +109,9 @@ public class ListadoClasesAdapter extends ListAdapter<Clase, ListadoClasesAdapte
             List<ClaseAlumno> claseAlumnos = clase.getClaseAlumnos();
 
             if (claseAlumnos != null && !claseAlumnos.isEmpty()) {
-                // Mapear la lista de ClaseAlumno a una lista de nombres (solo getNombre)
                 String nombresAlumnos = claseAlumnos.stream()
                         .filter(ca -> ca.getAlumno() != null)
-                        .map(ca -> ca.getAlumno().getNombre()) // 🟢 Corregido: SOLO getNombre()
+                        .map(ca -> ca.getAlumno().getNombre())
                         .collect(Collectors.joining(", "));
 
                 if (!nombresAlumnos.isEmpty()) {
@@ -100,7 +128,7 @@ public class ListadoClasesAdapter extends ListAdapter<Clase, ListadoClasesAdapte
         }
     }
 
-    // --- DiffUtil Callback (Sin cambios) ---
+    // --- DiffUtil Callback ---
     private static final DiffUtil.ItemCallback<Clase> DIFF_CALLBACK = new DiffUtil.ItemCallback<Clase>() {
         @Override
         public boolean areItemsTheSame(@NonNull Clase oldItem, @NonNull Clase newItem) {
@@ -109,11 +137,9 @@ public class ListadoClasesAdapter extends ListAdapter<Clase, ListadoClasesAdapte
 
         @Override
         public boolean areContentsTheSame(@NonNull Clase oldItem, @NonNull Clase newItem) {
-            // Aseguramos que la comparación de contenido sea segura y completa
             return oldItem.getFecha().equals(newItem.getFecha()) &&
                     oldItem.getHora().equals(newItem.getHora()) &&
                     oldItem.getEstado().equals(newItem.getEstado()) &&
-                    // Nota: Asumimos que la comparación de la lista de alumnos es correcta en el modelo
                     oldItem.getClaseAlumnos().equals(newItem.getClaseAlumnos());
         }
     };
