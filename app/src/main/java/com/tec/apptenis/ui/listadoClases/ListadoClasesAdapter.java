@@ -1,4 +1,4 @@
-package com.tec.apptenis.ui.listadoClases; // Usamos minúsculas por convención
+package com.tec.apptenis.ui.listadoClases;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,32 +20,30 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 public class ListadoClasesAdapter extends ListAdapter<Clase, ListadoClasesAdapter.ClaseViewHolder> {
+    // ... (Código de interfaces y constructores omitido por brevedad)
 
-
+    // Código original de interfaces y constructores aquí...
     public static interface OnClaseClickListener {
         void onClaseClick(Clase clase);
     }
 
     private final OnClaseClickListener listener;
 
-    // 2. CONSTRUCTOR AJUSTADO PARA RECIBIR EL LISTENER
     public ListadoClasesAdapter(OnClaseClickListener listener) {
         super(DIFF_CALLBACK);
-        this.listener = listener; // Guardamos la referencia al fragmento
+        this.listener = listener;
     }
 
-    // Dejamos un constructor sin listener por si es necesario, aunque el Fragment usará el otro
     public ListadoClasesAdapter() {
         this(null);
     }
 
-    // 3. AJUSTAR onCreateViewHolder para pasar el listener al ViewHolder
     @NonNull
     @Override
     public ClaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext())
                 .inflate(R.layout.item_clase, parent, false);
-        return new ClaseViewHolder(view, listener); // <-- Pasamos el listener
+        return new ClaseViewHolder(view, listener);
     }
 
     @Override
@@ -60,25 +58,25 @@ public class ListadoClasesAdapter extends ListAdapter<Clase, ListadoClasesAdapte
         private final TextView tvHora;
         private final TextView tvEstado;
         private final TextView tvAlumnos;
+        private final TextView tvComentario; // Declaración correcta
 
-        // 4. CONSTRUCTOR DEL VIEWHOLDER AJUSTADO PARA EL CLIC
         public ClaseViewHolder(@NonNull View itemView, final OnClaseClickListener listener) {
             super(itemView);
             tvFecha = itemView.findViewById(R.id.tv_fecha);
             tvHora = itemView.findViewById(R.id.tv_hora);
             tvEstado = itemView.findViewById(R.id.tv_estado);
             tvAlumnos = itemView.findViewById(R.id.tv_alumnos);
+            tvComentario = itemView.findViewById(R.id.tv_comentario); // Búsqueda correcta
 
-            // 5. IMPLEMENTACIÓN DEL CLIC EN LA FILA
+            // ... (Implementación del clic)
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     if (listener != null) {
                         int position = getAdapterPosition();
                         if (position != RecyclerView.NO_POSITION && getBindingAdapter() != null) {
-                            // Obtener el objeto Clase de la posición
                             Clase clase = ((ListadoClasesAdapter) getBindingAdapter()).getItem(position);
-                            listener.onClaseClick(clase); // <-- Llamar al método del Fragment
+                            listener.onClaseClick(clase);
                         }
                     }
                 }
@@ -105,7 +103,7 @@ public class ListadoClasesAdapter extends ListAdapter<Clase, ListadoClasesAdapte
                 tvHora.setText("N/A");
             }
 
-            // 3. LÓGICA DE ALUMNOS (Usando solo getNombre)
+            // 3. LÓGICA DE ALUMNOS
             List<ClaseAlumno> claseAlumnos = clase.getClaseAlumnos();
 
             if (claseAlumnos != null && !claseAlumnos.isEmpty()) {
@@ -125,6 +123,15 @@ public class ListadoClasesAdapter extends ListAdapter<Clase, ListadoClasesAdapte
 
             // 4. ESTADO
             tvEstado.setText(clase.getEstado());
+
+            // 5. 🔥 ASIGNAR COMENTARIO (Nuevo Código) 🔥
+            // ASUMIMOS que tu modelo Clase tiene un método getComentario()
+            String comentario = clase.getComentario();
+            if (comentario != null && !comentario.trim().isEmpty()) {
+                tvComentario.setText(comentario);
+            } else {
+                tvComentario.setText("[Sin comentario]");
+            }
         }
     }
 
@@ -137,9 +144,11 @@ public class ListadoClasesAdapter extends ListAdapter<Clase, ListadoClasesAdapte
 
         @Override
         public boolean areContentsTheSame(@NonNull Clase oldItem, @NonNull Clase newItem) {
+            // Asegúrate de incluir el comentario en esta comparación si quieres que el RecyclerView se actualice cuando cambie.
             return oldItem.getFecha().equals(newItem.getFecha()) &&
                     oldItem.getHora().equals(newItem.getHora()) &&
                     oldItem.getEstado().equals(newItem.getEstado()) &&
+                    oldItem.getComentario().equals(newItem.getComentario()) && // OPCIONAL: Descomentar si la Clase tiene getComentario()
                     oldItem.getClaseAlumnos().equals(newItem.getClaseAlumnos());
         }
     };
