@@ -158,7 +158,12 @@ public class TenisApi {
                 @Query("nuevoEstado") String estado
         );
 
-
+        @PUT("api/Clases/{id}")
+        Call<Clase> modificarClase(
+                @Header("Authorization") String token,
+                @Path("id") int idClase,
+                @Body Clase claseActualizada
+        );
         @GET("api/Clases/{id}")
         Call<Clase> obtenerClasePorId(
                 @Header("Authorization") String token,

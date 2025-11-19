@@ -1,4 +1,4 @@
-package com.tec.apptenis.ui.listadoClases; // Corregí el paquete a minúsculas por convención
+package com.tec.apptenis.ui.listadoClases;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -39,35 +39,29 @@ public class ListadoClasesFragment extends Fragment
 
         mViewModel = new ViewModelProvider(this).get(ListadoClasesViewModel.class);
 
-        // 1. Configurar el RecyclerView
         setupRecyclerView();
 
-        // 2. Observar los datos
         mViewModel.getClases().observe(getViewLifecycleOwner(), clases -> {
             if (clases != null) {
                 adapter.submitList(clases);
 
-                // Mostrar/Ocultar mensaje de lista vacía
+                // Mostrar u Ocultar mensaje de lista vacía
                 boolean isEmpty = clases.isEmpty();
                 binding.rvClases.setVisibility(isEmpty ? View.GONE : View.VISIBLE);
                 binding.tvEmptyList.setVisibility(isEmpty ? View.VISIBLE : View.GONE);
             }
         });
 
-        // 3. Solicitar la carga de datos al ViewModel (si no se hace en el init del ViewModel)
-        // mViewModel.cargarClases();
     }
 
     private void setupRecyclerView() {
-        // 2. PASAR EL LISTENER AL ADAPTADOR (this)
-        // Esto le dice al adaptador que este fragmento manejará el evento de clic.
+
         adapter = new ListadoClasesAdapter(this);
         binding.rvClases.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.rvClases.setAdapter(adapter);
     }
 
-    // 3. IMPLEMENTACIÓN DEL MÉTODO onClaseClick (Contrato de la interfaz)
-    @Override
+        @Override
     public void onClaseClick(Clase clase) {
         // Creamos el Bundle y pasamos el objeto Clase
         Bundle bundle = new Bundle();
@@ -79,6 +73,14 @@ public class ListadoClasesFragment extends Fragment
         // La navegación se dirige al destino de detalles y le pasa la data.
         navController.navigate(R.id.action_listadoClasesFragment_to_detallesClaseFragment, bundle);
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        // Cada vez que volvemos al fragment, recargamos las clases para reflejar cambios
+        mViewModel.cargarClases();
+    }
+
 
     @Override
     public void onDestroyView() {
