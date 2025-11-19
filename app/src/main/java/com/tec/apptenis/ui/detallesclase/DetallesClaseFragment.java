@@ -23,6 +23,7 @@ public class DetallesClaseFragment extends Fragment {
 
     private FragmentDetallesClaseBinding binding;
     private DetallesClaseViewModel viewModel;
+    private int idClase;
     private Clase claseSeleccionada;
 
     @Override
@@ -39,36 +40,40 @@ public class DetallesClaseFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        // Recibir la clase completa si vino por Bundle
         if (getArguments() != null) {
             claseSeleccionada = (Clase) getArguments().getSerializable("clase_seleccionada");
-        }
-
-        if (claseSeleccionada != null) {
-            mostrarDetallesClase(claseSeleccionada);
-        }
-
-        // Observa éxito
-        viewModel.getMensajeExito().observe(getViewLifecycleOwner(), mensaje -> {
-            Toast.makeText(getContext(), mensaje, Toast.LENGTH_LONG).show();
-
-            // Ahora refrescamos la clase desde el servidor
             if (claseSeleccionada != null) {
-                viewModel.refrescarClase(claseSeleccionada.getIdClase());
+                idClase = claseSeleccionada.getIdClase();
+                mostrarDetallesClase(claseSeleccionada);
+            } else {
+                idClase = getArguments().getInt("id_clase", -1);
             }
-        });
+        }
 
-        // Observa error
-        viewModel.getMensajeError().observe(getViewLifecycleOwner(), mensaje ->
-                Toast.makeText(getContext(), mensaje, Toast.LENGTH_LONG).show()
-        );
+        // Siempre refrescar la clase desde API para mostrar lo más reciente
+        if (idClase != -1) {
+            viewModel.refrescarClase(idClase);
+        }
 
-        // CLASE ACTUALIZADA LUEGO DEL REFRESH
+        // Observar clase actualizada
         viewModel.getClaseActualizada().observe(getViewLifecycleOwner(), clase -> {
             if (clase != null) {
                 claseSeleccionada = clase;
-                mostrarDetallesClase(claseSeleccionada);  // <—— refresca correctamente los EditText
+                mostrarDetallesClase(claseSeleccionada);
             }
         });
+
+        // Mensaje de éxito → cerrar fragment
+        viewModel.getMensajeExito().observe(getViewLifecycleOwner(), mensaje -> {
+            Toast.makeText(getContext(), mensaje, Toast.LENGTH_SHORT).show();
+            requireActivity().onBackPressed(); // cerrar
+        });
+
+        // Mensaje de error
+        viewModel.getMensajeError().observe(getViewLifecycleOwner(), mensaje ->
+                Toast.makeText(getContext(), mensaje, Toast.LENGTH_LONG).show()
+        );
 
         binding.btnGuardarDevolucion.setOnClickListener(v -> guardarDevolucion());
     }
@@ -85,10 +90,8 @@ public class DetallesClaseFragment extends Fragment {
                 .map(ca -> ca.getAlumno().getNombre())
                 .collect(Collectors.joining(", "));
 
-        // Refrescar devoluciones correctamente
         if (!clase.getClaseAlumnos().isEmpty()) {
             ClaseAlumno ca = clase.getClaseAlumnos().get(0);
-
             if (ca.getDevoluciones() != null && !ca.getDevoluciones().isEmpty()) {
                 binding.etComentarioDevolucion.setText(ca.getDevoluciones().get(0).getComentario());
                 binding.etEjemploDevolucion.setText(ca.getDevoluciones().get(0).getEjemplo());
@@ -105,7 +108,7 @@ public class DetallesClaseFragment extends Fragment {
 
     private void guardarDevolucion() {
         if (claseSeleccionada == null || claseSeleccionada.getClaseAlumnos().isEmpty()) {
-            Toast.makeText(getContext(), "Error: No se encontró la clase o el alumno asociado.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "No se encontró la clase o el alumno asociado.", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -119,7 +122,8 @@ public class DetallesClaseFragment extends Fragment {
 
         int idClaseAlumno = claseSeleccionada.getClaseAlumnos().get(0).getIdClaseAlumno();
 
-        viewModel.guardarDevolucion(comentario, ejemplo, idClaseAlumno);
+        // Guardar devolución con ID de clase para luego refrescar si quieres
+        viewModel.guardarDevolucion(comentario, ejemplo, idClaseAlumno, idClase);
     }
 
     @Override

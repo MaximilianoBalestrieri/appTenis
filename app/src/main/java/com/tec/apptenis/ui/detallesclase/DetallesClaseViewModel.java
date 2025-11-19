@@ -30,8 +30,14 @@ public class DetallesClaseViewModel extends AndroidViewModel {
     public LiveData<String> getMensajeExito() { return mensajeExito; }
     public LiveData<Clase> getClaseActualizada() { return claseActualizada; }
 
-    // Crear devolución
-    public void guardarDevolucion(String comentario, String ejemplo, int idClaseAlumno) {
+    /**
+     * Guarda la devolución y refresca la clase automáticamente.
+     * @param comentario Comentario de la devolución
+     * @param ejemplo Ejemplo de la devolución
+     * @param idClaseAlumno ID de la relación Clase-Alumno
+     * @param idClase ID de la clase
+     */
+    public void guardarDevolucion(String comentario, String ejemplo, int idClaseAlumno, int idClase) {
         Context context = getApplication().getApplicationContext();
         String token = TenisApi.leerToken(context);
 
@@ -41,8 +47,12 @@ public class DetallesClaseViewModel extends AndroidViewModel {
                 .enqueue(new Callback<Devolucion>() {
                     @Override
                     public void onResponse(@NonNull Call<Devolucion> call, @NonNull Response<Devolucion> response) {
-                        if (response.isSuccessful()) {
+                        if (response.isSuccessful() && response.body() != null) {
                             mensajeExito.setValue("Devolución guardada con éxito!");
+
+                            // 🔄 Refrescar la clase después de guardar
+                            new android.os.Handler(android.os.Looper.getMainLooper())
+                                    .postDelayed(() -> refrescarClase(idClase), 100);
                         } else {
                             mensajeError.setValue("Error al guardar: " + response.code());
                         }
@@ -55,7 +65,10 @@ public class DetallesClaseViewModel extends AndroidViewModel {
                 });
     }
 
-    // Refrescar la clase desde el servidor
+    /**
+     * Refresca la clase desde el servidor
+     * @param idClase ID de la clase
+     */
     public void refrescarClase(int idClase) {
         Context context = getApplication().getApplicationContext();
         String token = TenisApi.leerToken(context);

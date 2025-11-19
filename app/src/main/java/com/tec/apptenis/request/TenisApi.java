@@ -36,6 +36,7 @@ import retrofit2.http.POST;
 import retrofit2.http.PUT;
 import retrofit2.http.Part;
 import retrofit2.http.Path;
+import retrofit2.http.Query;
 
 
 public class TenisApi {
@@ -150,6 +151,13 @@ public class TenisApi {
         Call<List<Clase>> obtenerClases(
                 @Header("Authorization") String token
         );
+        @PUT("api/Clases/{id}/estado")
+        Call<Clase> actualizarEstadoClase(
+                @Header("Authorization") String token,
+                @Path("id") int idClase,
+                @Query("nuevoEstado") String estado
+        );
+
 
         @GET("api/Clases/{id}")
         Call<Clase> obtenerClasePorId(
