@@ -147,7 +147,15 @@ public class TenisApi {
                                 @Part("clase") RequestBody alumnoBody);
 
         @GET("api/Clases")
-        Call<List<Clase>> obtenerClases(@Header("Authorization") String token);
+        Call<List<Clase>> obtenerClases(
+                @Header("Authorization") String token
+        );
+
+        @GET("api/Clases/{id}")
+        Call<Clase> obtenerClasePorId(
+                @Header("Authorization") String token,
+                @Path("id") int idClase
+        );
 
 
         @POST("api/Clases")

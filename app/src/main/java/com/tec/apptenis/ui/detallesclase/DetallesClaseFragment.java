@@ -5,6 +5,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
@@ -38,7 +39,6 @@ public class DetallesClaseFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // 1. Obtener la clase del Bundle
         if (getArguments() != null) {
             claseSeleccionada = (Clase) getArguments().getSerializable("clase_seleccionada");
         }
@@ -47,34 +47,59 @@ public class DetallesClaseFragment extends Fragment {
             mostrarDetallesClase(claseSeleccionada);
         }
 
-        // 2. Observar mensajes del ViewModel
+        // Observa éxito
         viewModel.getMensajeExito().observe(getViewLifecycleOwner(), mensaje -> {
             Toast.makeText(getContext(), mensaje, Toast.LENGTH_LONG).show();
-            // Opcional: Navegar de vuelta o limpiar campos
+
+            // Ahora refrescamos la clase desde el servidor
+            if (claseSeleccionada != null) {
+                viewModel.refrescarClase(claseSeleccionada.getIdClase());
+            }
         });
 
-        viewModel.getMensajeError().observe(getViewLifecycleOwner(), mensaje -> {
-            Toast.makeText(getContext(), mensaje, Toast.LENGTH_LONG).show();
+        // Observa error
+        viewModel.getMensajeError().observe(getViewLifecycleOwner(), mensaje ->
+                Toast.makeText(getContext(), mensaje, Toast.LENGTH_LONG).show()
+        );
+
+        // CLASE ACTUALIZADA LUEGO DEL REFRESH
+        viewModel.getClaseActualizada().observe(getViewLifecycleOwner(), clase -> {
+            if (clase != null) {
+                claseSeleccionada = clase;
+                mostrarDetallesClase(claseSeleccionada);  // <—— refresca correctamente los EditText
+            }
         });
 
-        // 3. Configurar el botón de guardar
         binding.btnGuardarDevolucion.setOnClickListener(v -> guardarDevolucion());
     }
 
     private void mostrarDetallesClase(Clase clase) {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", new Locale("es", "ES"));
         String fechaStr = clase.getFecha() != null ? dateFormat.format(clase.getFecha()) : "N/A";
-        String horaStr = clase.getHora() != null && clase.getHora().length() >= 5 ? clase.getHora().substring(0, 5) : "N/A";
+        String horaStr = clase.getHora() != null && clase.getHora().length() >= 5
+                ? clase.getHora().substring(0, 5)
+                : "N/A";
 
-        // Nombres de alumnos
         String nombresAlumnos = clase.getClaseAlumnos().stream()
                 .filter(ca -> ca.getAlumno() != null)
                 .map(ca -> ca.getAlumno().getNombre())
                 .collect(Collectors.joining(", "));
 
-        // Llenar detalles
+        // Refrescar devoluciones correctamente
+        if (!clase.getClaseAlumnos().isEmpty()) {
+            ClaseAlumno ca = clase.getClaseAlumnos().get(0);
+
+            if (ca.getDevoluciones() != null && !ca.getDevoluciones().isEmpty()) {
+                binding.etComentarioDevolucion.setText(ca.getDevoluciones().get(0).getComentario());
+                binding.etEjemploDevolucion.setText(ca.getDevoluciones().get(0).getEjemplo());
+            } else {
+                binding.etComentarioDevolucion.setText("");
+                binding.etEjemploDevolucion.setText("");
+            }
+        }
+
         binding.tvDetalleAlumno.setText(nombresAlumnos);
-        binding.tvDetalleFechaHora.setText(String.format("📅 Fecha: %s | ⌚ Hora: %s", fechaStr, horaStr));
+        binding.tvDetalleFechaHora.setText("📅 Fecha: " + fechaStr + " | ⌚ Hora: " + horaStr);
         binding.tvDetalleEstado.setText("Estado: " + clase.getEstado());
     }
 
@@ -84,21 +109,16 @@ public class DetallesClaseFragment extends Fragment {
             return;
         }
 
-        // 1. Recopilar datos
         String comentario = binding.etComentarioDevolucion.getText().toString().trim();
         String ejemplo = binding.etEjemploDevolucion.getText().toString().trim();
 
         if (comentario.isEmpty() || ejemplo.isEmpty()) {
-            Toast.makeText(getContext(), "Por favor, complete Comentario y Ejemplo.", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Complete los campos.", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        // 2. Obtener IdClaseAlumno
-        // ASUNCIÓN: Si hay múltiples alumnos, solo guardamos la devolución para el primero.
-        // Si necesitas guardar una devolución por cada alumno, este Fragmento requerirá más complejidad (ej: un RecyclerView interno).
         int idClaseAlumno = claseSeleccionada.getClaseAlumnos().get(0).getIdClaseAlumno();
 
-        // 3. Llamada al ViewModel
         viewModel.guardarDevolucion(comentario, ejemplo, idClaseAlumno);
     }
 
