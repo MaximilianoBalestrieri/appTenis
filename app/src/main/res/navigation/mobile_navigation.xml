@@ -22,72 +22,85 @@
         android:id="@+id/nav_alumnos"
         android:name="com.tec.apptenis.ui.alumnos.AlumnosFragment"
         android:label="@string/menu_listadoalumnos"
-        tools:layout="@layout/fragment_alumnos" />
-    <action
-        android:id="@+id/action_alumnosFragment_to_detalleAlumnoFragment"
-        app:destination="@id/nav_detalle_alumno" />
-    <!-- Fragmento de Listado de Usuarios (El origen de la navegación) -->
+        tools:layout="@layout/fragment_alumnos" >
+        <action
+            android:id="@+id/action_alumnosFragment_to_detalleAlumnoFragment"
+            app:destination="@id/nav_detalle_alumno" />
+    </fragment>
+
     <fragment
         android:id="@+id/nav_listadousuarios"
         android:name="com.tec.apptenis.ui.listadoUsuarios.ListadoUsuariosFragment"
         android:label="Listado de Usuarios"
         tools:layout="@layout/fragment_listadousuarios">
-
         <action
             android:id="@+id/action_listadousuarios_to_registroalumno"
             app:destination="@id/nav_registroalumno" />
-
     </fragment>
-
 
     <fragment
         android:id="@+id/nav_registroalumno"
         android:name="com.tec.apptenis.ui.registroAlumno.RegistroAlumnoFragment"
         android:label="Registro de Alumno"
         tools:layout="@layout/fragment_registro_alumno">
-
-        <!-- Argumento que se pasa desde la Lista. Esto reemplaza el Bundle manual. -->
         <argument
             android:name="USUARIO_ID"
             app:argType="integer"
             android:defaultValue="-1" />
-
     </fragment>
+
     <fragment
         android:id="@+id/nav_detalle_alumno"
         android:name="com.tec.apptenis.ui.alumnos.DetallesAlumnoFragment"
         android:label="Detalles del Alumno"
         tools:layout="@layout/fragment_detalles_alumno">
-
         <argument
             android:name="alumno_id"
             app:argType="integer"
-            android:defaultValue="0" /> </fragment>
+            android:defaultValue="0" />
+    </fragment>
 
     <fragment
         android:id="@+id/nav_crear_clase"
         android:name="com.tec.apptenis.ui.clase.ClaseFragment"
         android:label="Crear Clase"
-        tools:layout="@layout/fragment_clase" >
+        tools:layout="@layout/fragment_clase" />
 
-    </fragment>
     <fragment
         android:id="@+id/nav_listado_clases"
         android:name="com.tec.apptenis.ui.listadoClases.ListadoClasesFragment"
         android:label="Listado de Clases"
-        tools:layout="@layout/fragment_listado_clases" />
-    <action
-        android:id="@+id/action_listadoClasesFragment_to_detallesClaseFragment"
-        app:destination="@id/nav_detalles_clase" />
+        tools:layout="@layout/fragment_listado_clases">
+        <action
+            android:id="@+id/action_listadoClasesFragment_to_detallesClaseFragment"
+            app:destination="@id/nav_detalles_clase" />
+    </fragment>
+
+    <!-- Detalles de Clase -->
     <fragment
         android:id="@+id/nav_detalles_clase"
         android:name="com.tec.apptenis.ui.detallesclase.DetallesClaseFragment"
         android:label="Detalles y Devolución"
         tools:layout="@layout/fragment_detalles_clase">
-
         <argument
             android:name="clase_seleccionada"
             app:argType="com.tec.apptenis.model.Clase" />
 
+        <!-- Acción hacia ModificarClaseFragment -->
+        <action
+            android:id="@+id/action_detallesClaseFragment_to_modificarClaseFragment"
+            app:destination="@id/modificarClaseFragment" />
     </fragment>
+
+    <!-- Fragmento Modificar Clase -->
+    <fragment
+        android:id="@+id/modificarClaseFragment"
+        android:name="com.tec.apptenis.ui.modificarclase.ModificarClaseFragment"
+        android:label="Modificar Clase"
+        tools:layout="@layout/fragment_modificar_clase">
+        <argument
+            android:name="clase_seleccionada"
+            app:argType="com.tec.apptenis.model.Clase" />
+    </fragment>
+
 </navigation>

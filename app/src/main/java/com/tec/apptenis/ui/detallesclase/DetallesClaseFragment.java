@@ -10,7 +10,10 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.ViewModelProvider;
+import androidx.navigation.NavController;
+import androidx.navigation.Navigation;
 
+import com.tec.apptenis.R;
 import com.tec.apptenis.databinding.FragmentDetallesClaseBinding;
 import com.tec.apptenis.model.Clase;
 import com.tec.apptenis.model.ClaseAlumno;
@@ -40,6 +43,8 @@ public class DetallesClaseFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        NavController navController = Navigation.findNavController(view);
+
         // Recibir la clase completa si vino por Bundle
         if (getArguments() != null) {
             claseSeleccionada = (Clase) getArguments().getSerializable("clase_seleccionada");
@@ -67,7 +72,7 @@ public class DetallesClaseFragment extends Fragment {
         // Mensaje de éxito → cerrar fragment
         viewModel.getMensajeExito().observe(getViewLifecycleOwner(), mensaje -> {
             Toast.makeText(getContext(), mensaje, Toast.LENGTH_SHORT).show();
-            requireActivity().onBackPressed(); // cerrar
+            requireActivity().onBackPressed(); // cerrar fragment
         });
 
         // Mensaje de error
@@ -76,6 +81,18 @@ public class DetallesClaseFragment extends Fragment {
         );
 
         binding.btnGuardarDevolucion.setOnClickListener(v -> guardarDevolucion());
+
+        // ---------- Botón Editar ----------
+        binding.btnEditarClase.setOnClickListener(v -> {
+            if (claseSeleccionada != null) {
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("clase_seleccionada", claseSeleccionada);
+                navController.navigate(
+                        R.id.action_detallesClaseFragment_to_modificarClaseFragment,
+                        bundle
+                );
+            }
+        });
     }
 
     private void mostrarDetallesClase(Clase clase) {
@@ -122,7 +139,6 @@ public class DetallesClaseFragment extends Fragment {
 
         int idClaseAlumno = claseSeleccionada.getClaseAlumnos().get(0).getIdClaseAlumno();
 
-        // Guardar devolución con ID de clase para luego refrescar si quieres
         viewModel.guardarDevolucion(comentario, ejemplo, idClaseAlumno, idClase);
     }
 
