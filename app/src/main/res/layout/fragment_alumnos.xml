@@ -13,18 +13,7 @@
         android:layout_height="match_parent"
         tools:listitem="@layout/item_alumno" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/fabAgregarAlumno"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|start"
-        android:layout_margin="24dp"
-        android:contentDescription="Agregar nuevo alumno"
-        app:backgroundTint="@color/design_default_color_secondary_variant"
-        android:src="@drawable/outline_add_circle_24"
-        app:tint="@android:color/white"
 
-     />
 
 
     <TextView

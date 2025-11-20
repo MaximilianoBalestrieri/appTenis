@@ -1,6 +1,7 @@
 package com.tec.apptenis;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -22,6 +23,9 @@ import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
 import com.tec.apptenis.databinding.ActivityMainBinding;
+import com.tec.apptenis.ui.login.LoginActivity;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
+
 
 public class MainActivity extends AppCompatActivity {
 
@@ -88,6 +92,45 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, FRAGMENT_CONTAINER_ID);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
+        navigationView.setNavigationItemSelectedListener(item -> {
+
+            int id = item.getItemId();
+
+            if (id == R.id.nav_cerrar_sesion) {
+
+                new MaterialAlertDialogBuilder(MainActivity.this)
+                        .setTitle("Cerrar sesión")
+                        .setMessage("¿Seguro que querés salir?")
+                        .setPositiveButton("Aceptar", (dialog, which) -> {
+
+                            binding.drawerLayout.closeDrawers();
+
+                            SharedPreferences prefis = getSharedPreferences("MisPreferencias", MODE_PRIVATE);
+                            prefis.edit().clear().apply();
+
+                            Intent i = new Intent(MainActivity.this, LoginActivity.class);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(i);
+                        })
+                        .setNegativeButton("Cancelar", (dialog, which) -> {
+                            binding.drawerLayout.closeDrawers();
+                            dialog.dismiss();
+                        })
+                        .show();
+
+                return true;
+            }
+
+            // Cerrar drawer después de navegación normal
+            boolean handled = NavigationUI.onNavDestinationSelected(item, navController);
+            if (handled) {
+                binding.drawerLayout.closeDrawers();
+            }
+
+            return handled;
+        });
+
+
     }
 
     @Override

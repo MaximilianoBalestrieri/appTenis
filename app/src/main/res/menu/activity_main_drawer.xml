@@ -29,5 +29,11 @@
             android:id="@+id/nav_listado_clases"
             android:icon="@drawable/sharp_align_space_even_24"
             android:title="Listado de Clases" />
+        <item
+            android:id="@+id/nav_cerrar_sesion"
+            android:title="Cerrar sesión"
+            android:icon="@drawable/ic_logout" />
+
+
     </group>
 </menu>
