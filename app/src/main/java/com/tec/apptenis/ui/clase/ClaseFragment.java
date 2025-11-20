@@ -156,10 +156,7 @@ public class ClaseFragment extends Fragment implements ClaseAdapter.OnSelectionC
         mViewModel.actualizarEstadoSeleccion(position, isChecked);
     }
 
-    // ----------------------------------------------------------------------
-    // LÓGICA FINAL PARA GUARDAR LA CLASE
-    // ----------------------------------------------------------------------
-    private void guardarClase() {
+        private void guardarClase() {
         // 1. Obtener datos de la UI
         String fechaStr = binding.tvFecha.getText().toString();
         String horaStr = binding.tvHora.getText().toString();
@@ -178,22 +175,21 @@ public class ClaseFragment extends Fragment implements ClaseAdapter.OnSelectionC
             return;
         }
 
-        // 3. Preparación de datos para la API
+        //  Preparación de datos para la API
         try {
-            // 3.1 Obtener solo los IDs de los alumnos
+            //  Obtener solo los IDs de los alumnos
             List<Integer> idsAlumnos = alumnosSeleccionados.stream()
                     .map(Alumno::getIdAlumno)
                     .collect(Collectors.toList());
 
-            // 3.2 Formatear la hora correctamente (HH:mm:ss)
+            //  Formatear la hora correctamente (HH:mm:ss)
             LocalTime horaLocal = LocalTime.parse(horaStr, TIME_FORMATTER);
             String horaApiStr = horaLocal.format(TIME_FORMATTER_API);
 
-            // 3.3 Obtener el ID del profesor
-            // REEMPLAZA ESTE VALOR: DEBES OBTENER ESTO DE TU SISTEMA DE AUTENTICACIÓN/SESIÓN.
-            int idProfesorActual = 1;
+            // Obtener el ID del profesor
+           int idProfesorActual = 1;
 
-            // 4. Crear el Objeto de Petición (DTO)
+            // Crear el Objeto de Petición (DTO)
             ClaseCreacionRequest request = new ClaseCreacionRequest(
                     fechaStr,
                     horaApiStr,
@@ -203,7 +199,7 @@ public class ClaseFragment extends Fragment implements ClaseAdapter.OnSelectionC
                     idsAlumnos
             );
 
-            // 5. Llamar al ViewModel para enviar a la API REST
+            //  Llamar al ViewModel para enviar a la API REST
             mViewModel.guardarNuevaClase(request);
 
         } catch (Exception e) {

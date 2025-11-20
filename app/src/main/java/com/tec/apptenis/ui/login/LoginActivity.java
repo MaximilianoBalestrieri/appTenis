@@ -23,7 +23,7 @@ public class LoginActivity extends AppCompatActivity {
         vm = ViewModelProvider.AndroidViewModelFactory.getInstance(getApplication()).create(LoginActivityViewModel.class);
         setContentView(binding.getRoot());
 
-        // **Observadores del ViewModel**
+
         // Observa mensajes (ej. errores de login) para mostrarlos en un Toast
         vm.getMMensaje().observe(this, new Observer<String>() {
             @Override
@@ -44,5 +44,5 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    // Se eliminan todos los métodos relacionados con sensores, permisos y el ciclo de vida (onResume/onPause)
+
 }

@@ -50,7 +50,7 @@ public class DetallesAlumnoFragment extends Fragment {
                 binding.etManoHabil.setText(alumno.getManohabil());
                 binding.etReves.setText(alumno.getReves());
 
-                // Si el alumno tiene ID (es edición), mostramos en modo solo lectura
+
                 if (alumno.getIdAlumno() != 0) {
                     habilitarCampos(false);
                     binding.btnEditarActualizar.setText("Editar");
@@ -64,14 +64,14 @@ public class DetallesAlumnoFragment extends Fragment {
             }
         });
 
-        // 3. Observar mensajes (Toast)
+
         viewModel.getMensaje().observe(getViewLifecycleOwner(), msg -> {
             if (msg != null && !msg.isEmpty()) {
                 Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
             }
         });
 
-        // 4. Lógica del botón Editar/Actualizar/Guardar
+        // botón Editar/Actualizar/Guardar
         binding.btnEditarActualizar.setOnClickListener(v -> {
             Alumno alumno = viewModel.getAlumno().getValue();
             if (alumno == null) return;
@@ -82,7 +82,7 @@ public class DetallesAlumnoFragment extends Fragment {
                 binding.btnEditarActualizar.setText("Actualizar");
                 editando = true;
             } else {
-                // Modo ACTUALIZAR -> Recoger datos y enviar
+
 
                 // 4.1. Recoger datos de los campos y actualizar el objeto
                 alumno.setNombre(binding.etNombre.getText().toString());
@@ -93,10 +93,10 @@ public class DetallesAlumnoFragment extends Fragment {
                 alumno.setManohabil(binding.etManoHabil.getText().toString());
                 alumno.setReves(binding.etReves.getText().toString());
 
-                // 4.2. Enviar a la API
+                //  Enviar a la API
                 viewModel.actualizarAlumno(alumno);
 
-                // 4.3. Volver a modo vista (después de intentar la actualización)
+
                 habilitarCampos(false);
                 binding.btnEditarActualizar.setText("Editar");
                 editando = false;
@@ -106,7 +106,7 @@ public class DetallesAlumnoFragment extends Fragment {
         return root;
     }
 
-    // Método de soporte para habilitar/deshabilitar campos
+
     private void habilitarCampos(boolean habilitar) {
         binding.etNombre.setEnabled(habilitar);
         binding.etTelefono.setEnabled(habilitar);

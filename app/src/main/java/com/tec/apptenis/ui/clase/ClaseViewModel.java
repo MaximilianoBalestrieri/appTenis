@@ -40,18 +40,11 @@ public class ClaseViewModel extends AndroidViewModel {
         _claseGuardadaExitosa.setValue(false);
     }
 
-    // 🟢 MÉTODO DE RESETEO: Público y a nivel de clase
-    /**
-     * Resetea el LiveData de éxito para evitar que el Fragment navegue al rotar
-     * o al regresar si el LiveData ya estaba en true.
-     */
+
     public void resetClaseGuardadaEstado() {
         _claseGuardadaExitosa.setValue(false);
     }
 
-    /**
-     * Carga todos los alumnos usando la API REST.
-     */
     public void cargarAlumnosParaSeleccion() {
         String token = TenisApi.leerToken(getApplication());
 
@@ -68,7 +61,7 @@ public class ClaseViewModel extends AndroidViewModel {
             @Override
             public void onResponse(@NonNull Call<List<Alumno>> call, @NonNull Response<List<Alumno>> response) {
                 if (response.isSuccessful() && response.body() != null) {
-                    // 1. Convertir la lista de Alumno a AlumnoSeleccionable
+                    //  Convertir la lista de Alumno a AlumnoSeleccionable
                     List<AlumnoSeleccionable> listaSeleccionable = new ArrayList<>();
                     for (Alumno alumno : response.body()) {
                         // Inicialmente, todos están deseleccionados (false)
@@ -91,9 +84,7 @@ public class ClaseViewModel extends AndroidViewModel {
         });
     }
 
-    /**
-     * Actualiza el estado de selección en el modelo de datos.
-     */
+
     public void actualizarEstadoSeleccion(int position, boolean isChecked) {
         List<AlumnoSeleccionable> currentList = _alumnosDisponibles.getValue();
         if (currentList != null && position >= 0 && position < currentList.size()) {
@@ -103,10 +94,6 @@ public class ClaseViewModel extends AndroidViewModel {
         }
     }
 
-    /**
-     * Obtiene solo los objetos Alumno que fueron seleccionados.
-     * @return Una lista de objetos Alumno.
-     */
     public List<Alumno> getAlumnosSeleccionados() {
         List<Alumno> seleccionados = new ArrayList<>();
         List<AlumnoSeleccionable> currentList = _alumnosDisponibles.getValue();
@@ -122,13 +109,6 @@ public class ClaseViewModel extends AndroidViewModel {
     }
 
 
-    // ----------------------------------------------------------------------
-    // MÉTODO guardarNuevaClase
-    // ----------------------------------------------------------------------
-    /**
-     * Envía la solicitud de creación de clase con alumnos inscritos a la API REST.
-     * @param request El DTO con los datos de la Clase y los IDs de los Alumnos.
-     */
     public void guardarNuevaClase(ClaseCreacionRequest request) {
         String token = TenisApi.leerToken(getApplication());
         if (token == null || token.isEmpty()) {

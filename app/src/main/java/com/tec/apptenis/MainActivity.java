@@ -76,7 +76,7 @@ public class MainActivity extends AppCompatActivity {
             menuNav.findItem(R.id.nav_listadousuarios).setVisible(false);
             menuNav.findItem(R.id.nav_crear_clase).setVisible(false);
             menuNav.findItem(R.id.nav_perfil).setVisible(false);
-            // Agregar otros items si existieran…
+
         }
 
         // --------- NAVIGATION COMPONENT ----------

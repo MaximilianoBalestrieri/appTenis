@@ -42,9 +42,6 @@ public class ModificarClaseViewModel extends AndroidViewModel {
         return mensajeError;
     }
 
-    // ==========================================================
-    // CARGAR CLASE POR ID
-    // ==========================================================
     public void cargarClase(int idClase) {
         String token = TenisApi.leerToken(getApplication());
 
@@ -68,9 +65,6 @@ public class ModificarClaseViewModel extends AndroidViewModel {
                 });
     }
 
-    // ==========================================================
-    // ACTUALIZAR CLASE
-    // ==========================================================
     public void actualizarClase(Clase claseModificada) {
 
         String token = TenisApi.leerToken(getApplication());
@@ -99,10 +93,6 @@ public class ModificarClaseViewModel extends AndroidViewModel {
                     }
                 });
     }
-
-    // ==========================================================
-    // CREAR UNA COPIA MODIFICABLE (OPCIONAL)
-    // ==========================================================
     public Clase copiarClaseParaEditar(Clase claseOriginal) {
         Clase copia = new Clase();
 

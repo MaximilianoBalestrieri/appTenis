@@ -47,7 +47,7 @@ public class DetallesAlumnoViewModel extends AndroidViewModel {
         int alumnoId = bundle.getInt("alumno_id", 0);
 
         if (alumnoId != 0) {
-            // Modo Edición: Llamar a la API para obtener el alumno
+            //  Llamamos a la API para obtener el alumno
             String token = TenisApi.leerToken(context);
             if (token == null) {
                 mensajeMutable.setValue("Error: Token de autorización no encontrado.");
@@ -55,7 +55,7 @@ public class DetallesAlumnoViewModel extends AndroidViewModel {
             }
 
             TenisApiService api = TenisApi.getTenisApiService();
-            // Usamos el endpoint hipotético para obtener un solo alumno por ID
+
             Call<Alumno> call = api.obtenerAlumnoPorId("Bearer " + token, alumnoId);
 
             call.enqueue(new Callback<Alumno>() {
@@ -76,15 +76,12 @@ public class DetallesAlumnoViewModel extends AndroidViewModel {
                 }
             });
         } else {
-            // Modo Creación: Inicializar un alumno vacío
+            //
             alumnoMutable.setValue(new Alumno());
         }
     }
 
-    /**
-     * Envía el objeto Alumno actualizado a la API.
-     * Utiliza el endpoint 'api/alumnos/actualizar' que usa PUT y requiere el objeto completo.
-     */
+
     public void actualizarAlumno(Alumno alumno) {
         String token = TenisApi.leerToken(context);
 
