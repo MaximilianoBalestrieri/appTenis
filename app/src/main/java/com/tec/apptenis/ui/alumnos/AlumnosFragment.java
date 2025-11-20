@@ -37,10 +37,10 @@ public class AlumnosFragment extends Fragment implements AlumnosAdapter.OnAlumno
         binding.rvAlumnos.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.rvAlumnos.setAdapter(adapter);
 
-        binding.fabAgregarAlumno.setOnClickListener(v -> {
+        /*binding.fabAgregarAlumno.setOnClickListener(v -> {
             // Navegación al alta de alumno
             Toast.makeText(getContext(), "Navegando a Alta de Alumno...", Toast.LENGTH_SHORT).show();
-        });
+        });*/
 
         return binding.getRoot();
     }
