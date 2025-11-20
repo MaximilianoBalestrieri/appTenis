@@ -5,6 +5,7 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.TextView;
 
 import com.google.android.material.snackbar.Snackbar;
@@ -16,9 +17,9 @@ import androidx.navigation.ui.AppBarConfiguration;
 import androidx.navigation.ui.NavigationUI;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment; // Necesario para el método de navegación
-import androidx.fragment.app.FragmentManager; // Necesario
-import androidx.fragment.app.FragmentTransaction; // Necesario
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import com.tec.apptenis.databinding.ActivityMainBinding;
 
@@ -26,7 +27,6 @@ public class MainActivity extends AppCompatActivity {
 
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityMainBinding binding;
-
 
     private static final int FRAGMENT_CONTAINER_ID = R.id.nav_host_fragment_content_main_activity_menu;
 
@@ -38,40 +38,53 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         setSupportActionBar(binding.appBarMainActivityMenu.toolbar);
-        binding.appBarMainActivityMenu.fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null)
-                        .setAnchorView(R.id.fab).show();
-            }
+        binding.appBarMainActivityMenu.fab.setOnClickListener(view -> {
+            Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                    .setAction("Action", null)
+                    .setAnchorView(R.id.fab).show();
         });
 
         DrawerLayout drawer = binding.drawerLayout;
         NavigationView navigationView = binding.navView;
 
-        // Configuración del encabezado de navegación
+        // --------- HEADER DEL NAV DRAWER ----------
         View headerView = navigationView.getHeaderView(0);
         TextView tvNombre = headerView.findViewById(R.id.tvUsuarioLogueado);
+
         SharedPreferences prefs = this.getSharedPreferences("MisPreferencias", Context.MODE_PRIVATE);
         String emailUsuario = prefs.getString("email", "Usuario Invitado");
+        String rolUsuario = prefs.getString("rol", "");    // <-- IMPORTANTE: LEER ROL DEL LOGIN
+
         if (tvNombre != null) {
             tvNombre.setText("Usuario: " + emailUsuario);
         }
 
-        // Configuración del Navigation Component
+        // --------- MOSTRAR / OCULTAR OPCIONES SEGÚN ROL ----------
+        Menu menuNav = navigationView.getMenu();
+
+        if (rolUsuario.equalsIgnoreCase("Alumno")) {
+
+            // Mostrar solo lo permitido
+            menuNav.findItem(R.id.nav_alumnos).setVisible(true);
+            menuNav.findItem(R.id.nav_listado_clases).setVisible(true);
+
+            // Ocultar lo demás
+            menuNav.findItem(R.id.nav_listadousuarios).setVisible(false);
+            menuNav.findItem(R.id.nav_crear_clase).setVisible(false);
+            menuNav.findItem(R.id.nav_perfil).setVisible(false);
+            // Agregar otros items si existieran…
+        }
+
+        // --------- NAVIGATION COMPONENT ----------
         mAppBarConfiguration = new AppBarConfiguration.Builder(
                 R.id.nav_home,
                 R.id.nav_listadousuarios,
                 R.id.nav_alumnos,
-                // 1. Añadido el Listado de Clases
                 R.id.nav_listado_clases,
-                // 2. Añadido el Fragment para Crear Clase (si está en el menú)
                 R.id.nav_crear_clase)
                 .setOpenableLayout(drawer)
                 .build();
 
-        // Usamos el ID del NavHostFragment que definiste
         NavController navController = Navigation.findNavController(this, FRAGMENT_CONTAINER_ID);
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
@@ -90,9 +103,7 @@ public class MainActivity extends AppCompatActivity {
                 || super.onSupportNavigateUp();
     }
 
-
     public void navigateToFragment(Fragment fragment, String title, Bundle args) {
-
         if (args != null) {
             fragment.setArguments(args);
         }
@@ -100,12 +111,8 @@ public class MainActivity extends AppCompatActivity {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
 
-        // Reemplazamos el contenido en el contenedor del NavHostFragment
         fragmentTransaction.replace(FRAGMENT_CONTAINER_ID, fragment);
-
-        // Importante: Agregar a la pila de regreso para poder usar el botón 'Atrás'
         fragmentTransaction.addToBackStack(null);
-
         fragmentTransaction.commit();
 
         if (title != null && getSupportActionBar() != null) {

@@ -29,10 +29,7 @@ public class PerfilViewModel extends AndroidViewModel {
         mEstado.setValue(false);
         mNombreBoton.setValue("EDITAR");
     }
-
-    // ----------------------------------------------------------------------
-    // GETTERS PARA EXPONER LOS LIVEDATA
-    // ----------------------------------------------------------------------
+//----------------------------------------------------------------------
 
     public LiveData<Boolean> getmEstado() {
         return mEstado;
@@ -46,9 +43,6 @@ public class PerfilViewModel extends AndroidViewModel {
         return mProfesor;
     }
 
-    // ----------------------------------------------------------------------
-    // OBTENER PERFIL
-    // ----------------------------------------------------------------------
     public void obtenerPerfil() {
         String token = TenisApi.leerToken(getApplication());
         if (token == null) {
@@ -83,17 +77,15 @@ public class PerfilViewModel extends AndroidViewModel {
         });
     }
 
-    // ----------------------------------------------------------------------
-    // LÓGICA DE GUARDADO (cambioBoton)
-    // ----------------------------------------------------------------------
+
     public void cambioBoton(String nombreBoton, String apellido, String telefono, String email, String clave) {
 
-        // 1. Alternar estado (EDITAR -> GUARDAR)
+
         if (nombreBoton.equalsIgnoreCase("EDITAR")) {
             mEstado.setValue(true);
             mNombreBoton.setValue("GUARDAR");
         }
-        // 2. Intentar guardar (GUARDAR -> EDITAR)
+
         else {
             mEstado.setValue(false);
             mNombreBoton.setValue("EDITAR");
@@ -107,7 +99,7 @@ public class PerfilViewModel extends AndroidViewModel {
             }
 
             int idProfesor = profesorActual.getIdProfesor();
-            Profesor actualizado = profesorActual; // Usamos la misma instancia
+            Profesor actualizado = profesorActual; //
 
             // ===== VALIDACIONES =====
             if (apellido.trim().isEmpty() || telefono.trim().isEmpty() || email.trim().isEmpty() || clave.trim().isEmpty()) {
@@ -124,11 +116,11 @@ public class PerfilViewModel extends AndroidViewModel {
                 return;
             }
 
-            // 1. Modificar campos de la raíz (Profesor)
+
             actualizado.setapellido(apellido);
             actualizado.setTelefono(telefono);
 
-            // 2.CORRECCIÓN: Modificar campos del objeto Usuario anidado
+
             if (actualizado.getUsuario() != null) {
                 actualizado.getUsuario().setEmail(email);
                 actualizado.getUsuario().setClave(clave);

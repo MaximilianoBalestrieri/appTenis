@@ -93,4 +93,3 @@ public class Alumno implements Serializable {
         this.reves = reves;
     }
 }
-

@@ -11,6 +11,7 @@ import com.tec.apptenis.model.ClaseCreacionRequest;
 import com.tec.apptenis.model.Devolucion;
 import com.tec.apptenis.model.DevolucionRequest;
 import com.tec.apptenis.model.IdUsuarioRequest;
+import com.tec.apptenis.model.LoginResponse;
 import com.tec.apptenis.model.Profesor;
 import com.tec.apptenis.model.Clase;
 import com.tec.apptenis.model.Usuario;
@@ -27,8 +28,6 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 import retrofit2.http.Body;
-import retrofit2.http.Field;
-import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.Multipart;
@@ -88,11 +87,11 @@ public class TenisApi {
 
     public interface TenisApiService { // Interfaz renombrada de InmoServicio a TenisApiService
 
-        @POST("api/Usuarios/Login")
-        Call<String> login(
-                // 🔑 CORRECCIÓN: Usar @Body para enviar el objeto como JSON
-                @Body UsuarioRequest request
-        );
+
+        @POST("api/Usuarios/login")
+        Call<LoginResponse> login(@Body UsuarioRequest request);
+
+
 
         @GET("api/Profesores")
         Call<List<Profesor>> obtenerPerfil(@Header("Authorization") String token);
